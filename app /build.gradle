@@ -18,7 +18,6 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            // Для простоты подписываем debug-сертификатом, чтобы APK сразу ставился на ТВ
             signingConfig signingConfigs.debug
         }
     }
