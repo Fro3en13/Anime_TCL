@@ -19,17 +19,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Скачивает стабильный Gradle 8.5
       - name: Setup Gradle 8.5
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.5'
 
-      # Запускает сборку (SDK подтянется автоматически из системы)
-      - name: Build Release APK
-        run: gradle :app:assembleRelease --stacktrace
+      - name: Check files & Build APK
+        run: |
+          echo "=== Проверка app/build.gradle ==="
+          cat app/build.gradle
+          echo "================================="
+          gradle :app:assembleRelease --stacktrace
 
-      # Сохраняет готовый APK в артефакты
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
