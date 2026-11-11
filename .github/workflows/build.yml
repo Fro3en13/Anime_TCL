@@ -24,15 +24,22 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Check files & Build APK
+      # Проверяем структуру и сразу пробуем собрать
+      - name: Diagnostic & Build
         run: |
-          echo "=== Проверка app/build.gradle ==="
-          cat app/build.gradle
-          echo "================================="
-          gradle :app:assembleRelease --stacktrace
+          echo "=== 1. Проверяем корень ==="
+          ls -la
+          echo "=== 2. Проверяем папку app ==="
+          ls -la app/
+          echo "=== 3. Проверяем settings.gradle ==="
+          cat settings.gradle
+          echo "=== 4. Список доступных задач в :app ==="
+          gradle :app:tasks --all || true
+          echo "=== 5. Запуск сборки ==="
+          gradle :app:assemble --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AnimeTV-Release
-          path: app/build/outputs/apk/release/*.apk
+          path: app/build/outputs/apk/**/*.apk
