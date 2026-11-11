@@ -24,22 +24,22 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      # Проверяем структуру и сразу пробуем собрать
-      - name: Diagnostic & Build
+      - name: Auto-fix folder & Build APK
         run: |
-          echo "=== 1. Проверяем корень ==="
-          ls -la
-          echo "=== 2. Проверяем папку app ==="
-          ls -la app/
-          echo "=== 3. Проверяем settings.gradle ==="
-          cat settings.gradle
-          echo "=== 4. Список доступных задач в :app ==="
-          gradle :app:tasks --all || true
-          echo "=== 5. Запуск сборки ==="
-          gradle :app:assemble --stacktrace
+          # Если в имени папки русская буква или лишний символ — переименовываем в чистую латинскую 'app'
+          for d in *; do
+            if [ -d "$d" ] && [ "$d" != "app" ] && [ "$d" != ".git" ] && [ "$d" != ".github" ]; then
+              echo "Исправляем имя папки '$d' на латинскую 'app'..."
+              mv "$d" app
+              break
+            fi
+          done
+
+          # Собираем APK
+          gradle :app:assembleRelease --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AnimeTV-Release
-          path: app/build/outputs/apk/**/*.apk
+          path: app/build/outputs/apk/release/*.apk
