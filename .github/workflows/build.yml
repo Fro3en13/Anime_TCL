@@ -19,14 +19,19 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Gradle & Build APK
-        run: |
-          gradle wrapper --gradle-version 8.5
-          chmod +x gradlew
-          ./gradlew assembleRelease --stacktrace
+      # Скачивает стабильный Gradle 8.5
+      - name: Setup Gradle 8.5
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.5'
 
+      # Запускает сборку (SDK подтянется автоматически из системы)
+      - name: Build Release APK
+        run: gradle assembleRelease --stacktrace
+
+      # Сохраняет готовый APK в артефакты
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AnimeTV-Release
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/*.apk
